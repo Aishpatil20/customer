@@ -67,7 +67,7 @@ exports.createPaymentIntent = async (req, res) => {
         enabled: true,
       },
     });
-
+    console.log(paymentIntent);
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
     console.error(err);
