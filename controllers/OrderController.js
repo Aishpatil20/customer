@@ -54,21 +54,37 @@ exports.getOrderById = async (req, res) => {
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 };
-
 exports.createPaymentIntent = async (req, res) => {
   try {
     const { amount } = req.body;
 
-    // Create a PaymentIntent with the order amount and currency
+    // Step 1: Create a new customer
+    const customer = await stripe.customers.create();
+
+    // Step 2: Create an ephemeral key for the customer
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customer.id },
+      { apiVersion: '2020-08-27' }
+    );
+
+    // Step 3: Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount * 100, // Stripe amount is in cents/pence
       currency: 'inr',
+      customer: customer.id,
       automatic_payment_methods: {
         enabled: true,
       },
     });
+
     console.log(paymentIntent);
-    res.json({ clientSecret: paymentIntent.client_secret });
+
+    // Step 4: Respond with the customer ID, ephemeral key, and client secret
+    res.json({
+      clientSecret: paymentIntent.client_secret,
+      customerId: customer.id,
+      ephemeralKey: ephemeralKey.secret
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to create PaymentIntent' });
