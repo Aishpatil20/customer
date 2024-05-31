@@ -74,6 +74,7 @@ exports.getOrdersByCustomer = async (req, res) => {
       .populate('droneID', 'name')
       .populate('statusID', 'name')
       .exec();
+    console.log(orders)
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({ success: false, error: 'No orders found for the given customer' });
