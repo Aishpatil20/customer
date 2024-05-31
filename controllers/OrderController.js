@@ -1,7 +1,6 @@
-// controllers/OrderController.js
 const { models } = require("../models");
 const mongoose = require('mongoose');
-const { ObjectId } = mongoose.Types;
+const { ObjectId } = mongoose.Types; // Import ObjectId correctly
 const Order = models.Order;
 const Customer = models.Customer;
 const stripe = require('stripe')('sk_test_51OIR40SBwuRaStr9DR7iuStAgVHzsF6FoUM8xG4JEPKvJjUgxZepieBMKqEKIuLpVXmJO8DkiHoyZ814PntQCfLY00CV7c3Mnc');
@@ -61,8 +60,7 @@ exports.getOrderById = async (req, res) => {
     console.error(error);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
-};
-exports.getOrdersByCustomer = async (req, res) => {
+}; exports.getOrdersByCustomer = async (req, res) => {
   try {
     const customerId = req.params.id;
 
@@ -70,8 +68,11 @@ exports.getOrdersByCustomer = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid customer ID' });
     }
 
-    const orders = await Order.find({ customerID: ObjectId(customerId) });
-    console.log(orders)
+    const orders = await Order.find({ customerID: ObjectId(customerId) })
+      .populate('customerID', 'name email')
+      .populate('droneID', 'name')
+      .populate('statusID', 'name')
+      .exec();
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({ success: false, error: 'No orders found for the given customer' });
