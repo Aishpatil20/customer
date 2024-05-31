@@ -69,11 +69,7 @@ exports.getOrdersByCustomer = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid customer ID' });
     }
 
-    const orders = await Order.find({ customerID: ObjectId(customerId) })
-      .populate('customerID', 'name email')
-      .populate('droneID', 'name')
-      .populate('statusID', 'name')
-      .exec();
+    const orders = await Order.find({ customerID: ObjectId(customerId) });
     console.log(orders)
 
     if (!orders || orders.length === 0) {
