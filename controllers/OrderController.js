@@ -1,6 +1,7 @@
 // controllers/OrderController.js
 const { models } = require("../models");
 const Order = models.Order;
+const Customer = models.Customer;
 const stripe = require('stripe')('sk_test_51OIR40SBwuRaStr9DR7iuStAgVHzsF6FoUM8xG4JEPKvJjUgxZepieBMKqEKIuLpVXmJO8DkiHoyZ814PntQCfLY00CV7c3Mnc');
 
 exports.getAllOrders = async (req, res) => {
