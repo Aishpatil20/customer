@@ -54,6 +54,26 @@ exports.getOrderById = async (req, res) => {
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 };
+exports.getOrdersByCustomer = async (req, res) => {
+  try {
+    const customerId = req.params.id;
+
+    const orders = await Order.find({ customerID: customerId })
+      .populate('customerID', 'name email')
+      .populate('droneID', 'name')
+      .populate('statusID', 'name')
+      .exec();
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ success: false, error: 'No orders found for the given customer' });
+    }
+
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
 exports.createPaymentIntent = async (req, res) => {
   try {
     const { amount } = req.body;

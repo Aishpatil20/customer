@@ -14,6 +14,7 @@ router.post("/auth/login", AuthController.login);
 router.get("/orders", OrderController.getAllOrders);
 router.post("/orders", OrderController.createOrder);
 router.get("/orders/:id", OrderController.getOrderById);
+router.get("/ordersCustomer/:id", OrderController.getOrderById);
 
 // Payment routes
 router.get("/payments", PaymentController.getAllPayments);
