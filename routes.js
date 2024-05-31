@@ -19,6 +19,10 @@ router.get("/orders/:id", OrderController.getOrderById);
 router.get("/payments", PaymentController.getAllPayments);
 router.post("/payments", PaymentController.createPayment);
 router.get("/payments/:id", PaymentController.getPaymentById);
+
+// Create Payment Intent route
+router.post("/create-payment-intent", OrderController.createPaymentIntent);
+
 // Add more routes as needed...
 
 module.exports = router;
