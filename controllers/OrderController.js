@@ -13,20 +13,27 @@ exports.getAllOrders = async (req, res) => {
   }
 };
 
+const Order = require('../models/Order');
+const Customer = require('../models/Customer'); // Import the Customer model
+
 exports.createOrder = async (req, res) => {
   try {
-    const {
-      source,
-      destination,
-      weight
-    } = req.body;
+    const { source, destination, weight, customerId } = req.body;
+
+    // Find the customer by ID
+    const customer = await Customer.findById(customerId);
+
+    if (!customer) {
+      return res.status(404).json({ success: false, error: 'Customer not found' });
+    }
 
     // Create the order
     const newOrder = new Order({
+      customerID: customer._id, // Associate the order with the customer
       pickupLocation: source,
       deliveryLocation: destination,
       weight,
-      timestamp: new Date() // Assuming you want to timestamp the order creation
+      timestamp: new Date(), // Assuming you want to timestamp the order creation
     });
 
     // Save the order to the database
@@ -35,7 +42,7 @@ exports.createOrder = async (req, res) => {
     res.status(201).json({ success: true, data: newOrder });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, error: "Internal server error" });
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
 
@@ -58,12 +65,13 @@ exports.getOrdersByCustomer = async (req, res) => {
   try {
     const customerId = req.params.id;
 
+    console.log(customerId);
     const orders = await Order.find({ customerID: customerId })
       .populate('customerID', 'name email')
       .populate('droneID', 'name')
       .populate('statusID', 'name')
       .exec();
-
+    console.log(orders);
     if (!orders || orders.length === 0) {
       return res.status(404).json({ success: false, error: 'No orders found for the given customer' });
     }
