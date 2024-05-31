@@ -13,8 +13,6 @@ exports.getAllOrders = async (req, res) => {
   }
 };
 
-const Order = require('../models/Order');
-const Customer = require('../models/Customer'); // Import the Customer model
 
 exports.createOrder = async (req, res) => {
   try {
