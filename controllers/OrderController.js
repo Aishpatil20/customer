@@ -1,5 +1,6 @@
 // controllers/OrderController.js
 const { models } = require("../models");
+const mongoose = require('mongoose');
 const Order = models.Order;
 const Customer = models.Customer;
 const stripe = require('stripe')('sk_test_51OIR40SBwuRaStr9DR7iuStAgVHzsF6FoUM8xG4JEPKvJjUgxZepieBMKqEKIuLpVXmJO8DkiHoyZ814PntQCfLY00CV7c3Mnc');
@@ -64,13 +65,16 @@ exports.getOrdersByCustomer = async (req, res) => {
   try {
     const customerId = req.params.id;
 
-    console.log(customerId);
-    const orders = await Order.find({ customerID: customerId })
+    if (!ObjectId.isValid(customerId)) {
+      return res.status(400).json({ success: false, error: 'Invalid customer ID' });
+    }
+
+    const orders = await Order.find({ customerID: ObjectId(customerId) })
       .populate('customerID', 'name email')
       .populate('droneID', 'name')
       .populate('statusID', 'name')
       .exec();
-    console.log(orders);
+
     if (!orders || orders.length === 0) {
       return res.status(404).json({ success: false, error: 'No orders found for the given customer' });
     }
